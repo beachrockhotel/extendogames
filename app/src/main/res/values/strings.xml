@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ExtendoGames</string>
+    <string name="profile_image">Изображение профиля</string>
+    <string name="back">Назад</string>
+    <string name="total_price_format">Общая сумма: %1$.2f руб</string>
+
+    <plurals name="items_plural">
+        <item quantity="one">%d товар</item>
+        <item quantity="other">%d товара</item>
+    </plurals>
+</resources>
