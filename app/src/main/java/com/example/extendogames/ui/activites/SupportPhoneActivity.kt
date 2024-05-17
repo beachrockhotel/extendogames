@@ -4,17 +4,16 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.example.extendogames.R
-import com.example.extendogames.api.services.RetrofitClient
-import com.example.extendogames.api.requests.PhoneNumberRequest
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.extendogames.ui.viewmodels.SupportPhoneViewModel
 
 class SupportPhoneActivity : AppCompatActivity() {
     private lateinit var phoneNumberInput: EditText
     private lateinit var submitButton: Button
+    private val viewModel: SupportPhoneViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,27 +25,20 @@ class SupportPhoneActivity : AppCompatActivity() {
         submitButton.setOnClickListener {
             val phoneNumber = phoneNumberInput.text.toString().trim()
             if (phoneNumber.isNotEmpty()) {
-                sendPhoneNumber(phoneNumber)
+                viewModel.sendPhoneNumber(phoneNumber)
             } else {
                 Toast.makeText(this, "Пожалуйста, введите номер телефона", Toast.LENGTH_SHORT).show()
             }
         }
+
+        setupObservers()
     }
 
-    private fun sendPhoneNumber(phoneNumber: String) {
-        RetrofitClient.instance.sendPhoneNumber(PhoneNumberRequest(phoneNumber))
-            .enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(applicationContext, "Номер телефона успешно отправлен", Toast.LENGTH_LONG).show()
-                    } else {
-                        Toast.makeText(applicationContext, "Не удалось отправить номер телефона", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Toast.makeText(applicationContext, "Ошибка: ${t.message}", Toast.LENGTH_LONG).show()
-                }
-            })
+    private fun setupObservers() {
+        viewModel.message.observe(this, Observer { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            }
+        })
     }
 }

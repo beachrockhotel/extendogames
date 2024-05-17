@@ -6,21 +6,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.extendogames.R
-import com.example.extendogames.api.services.RetrofitClient
 import com.example.extendogames.api.models.Review
 import com.example.extendogames.ui.adapters.ReviewAdapter
-import com.google.firebase.auth.FirebaseAuth
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.extendogames.ui.viewmodels.ReviewViewModel
 
 class ReviewActivity : AppCompatActivity() {
-    private val apiService by lazy { RetrofitClient.instance }
+
+    private val viewModel: ReviewViewModel by viewModels()
     private lateinit var adapter: ReviewAdapter
-    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private lateinit var reviewRatingSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +36,7 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         initRecyclerView()
+        setupObservers()
         setupReviewSubmission()
     }
 
@@ -45,19 +44,15 @@ class ReviewActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.review_recycler_view)
         adapter = ReviewAdapter()
         recyclerView.adapter = adapter
+    }
 
-        apiService.getReviews().enqueue(object : Callback<List<Review>> {
-            override fun onResponse(call: Call<List<Review>>, response: Response<List<Review>>) {
-                if (response.isSuccessful) {
-                    response.body()?.let { adapter.setReviews(it) }
-                } else {
-                    Toast.makeText(applicationContext, "Ошибка загрузки отзывов: ${response.errorBody()?.string()}", Toast.LENGTH_LONG).show()
-                }
-            }
+    private fun setupObservers() {
+        viewModel.reviews.observe(this, Observer { reviews ->
+            reviews?.let { adapter.setReviews(it) }
+        })
 
-            override fun onFailure(call: Call<List<Review>>, t: Throwable) {
-                Toast.makeText(applicationContext, "Ошибка подключения: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
-            }
+        viewModel.message.observe(this, Observer { message ->
+            message?.let { Toast.makeText(this, it, Toast.LENGTH_LONG).show() }
         })
     }
 
@@ -71,27 +66,10 @@ class ReviewActivity : AppCompatActivity() {
             if (text.isBlank()) {
                 Toast.makeText(this, "Введите корректный отзыв.", Toast.LENGTH_SHORT).show()
             } else {
-                val userEmail = auth.currentUser?.email ?: "email@notavailable.com"
+                val userEmail = viewModel.getCurrentUserEmail()
                 val review = Review(userEmail = userEmail, text = text, rating = rating)
-                postReview(review)
+                viewModel.postReview(review)
             }
         }
-    }
-
-    private fun postReview(review: Review) {
-        apiService.postReview(review).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(applicationContext, "Отзыв успешно добавлен", Toast.LENGTH_SHORT).show()
-                    adapter.addReview(review)
-                } else {
-                    Toast.makeText(applicationContext, "Ошибка при добавлении отзыва: ${response.errorBody()?.string()}", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(applicationContext, "Ошибка подключения: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
-            }
-        })
     }
 }

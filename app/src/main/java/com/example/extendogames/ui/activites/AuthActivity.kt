@@ -13,17 +13,17 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import com.example.extendogames.R
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.extendogames.ui.viewmodels.AuthViewModel
 
 class AuthActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
+    private val viewModel: AuthViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-
-        auth = FirebaseAuth.getInstance()
 
         val emailField = findViewById<EditText>(R.id.login_field_auth)
         val passwordField = findViewById<EditText>(R.id.password_field_auth)
@@ -32,36 +32,25 @@ class AuthActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
-
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Пожалуйста, заполните все поля.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val userId = auth.currentUser?.uid
-                    userId?.let {
-                        FirebaseFirestore.getInstance().collection("Users").document(it)
-                            .get()
-                            .addOnSuccessListener { document ->
-                                val isAdmin = document.getBoolean("isAdmin") ?: false
-                                val intent = Intent(this@AuthActivity, MainActivity::class.java).apply {
-                                    putExtra("isAdmin", isAdmin)
-                                }
-                                startActivity(intent)
-                                finish()
-                            }
-                    }
-                } else {
-                    // Ошибка входа
-                    Toast.makeText(this, "Ошибка входа: ${task.exception?.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-
+            viewModel.login(email, password)
         }
 
+        viewModel.loginResult.observe(this, Observer { result ->
+            result.onSuccess { userPrivileges ->
+                val intent = Intent(this@AuthActivity, MainActivity::class.java).apply {
+                    putExtra("userPrivileges", userPrivileges)
+                }
+                startActivity(intent)
+                finish()
+            }.onFailure { exception ->
+                Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
+            }
+        })
 
+        setupRegistrationLink()
+    }
+
+    private fun setupRegistrationLink() {
         val registrationLinkText = findViewById<TextView>(R.id.textView_registration_link)
         val spannable = SpannableString(registrationLinkText.text)
         val clickableSpan = object : ClickableSpan() {

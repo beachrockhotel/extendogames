@@ -2,36 +2,29 @@ package com.example.extendogames.ui.activites
 
 import android.os.Bundle
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.extendogames.R
-import com.example.extendogames.api.services.RetrofitClient
-import com.example.extendogames.api.models.CartItem
 import com.example.extendogames.api.models.Order
 import com.example.extendogames.api.models.OrderItem
-import com.example.extendogames.api.responses.OrderResponse
-import com.example.extendogames.managers.CartManager
+import com.example.extendogames.api.services.RetrofitClient
 import com.example.extendogames.ui.adapters.CartAdapter
+import com.example.extendogames.ui.factory.CartViewModelFactory
+import com.example.extendogames.ui.viewmodels.CartViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 
 class CartActivity : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var totalPriceTextView: TextView
-    private lateinit var itemsCountTextView: TextView
-    private lateinit var clearCartButton: Button
-    private lateinit var checkoutButton: Button
+    private val viewModel: CartViewModel by viewModels { CartViewModelFactory(RetrofitClient.instance) }
     private lateinit var nameInput: EditText
     private lateinit var emailInput: EditText
-    private lateinit var tableNumberSpinner: Spinner
-    private lateinit var adapter: CartAdapter
-
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
@@ -39,108 +32,102 @@ class CartActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
 
-        recyclerView = findViewById(R.id.cartRecyclerView)
-        totalPriceTextView = findViewById(R.id.total_price)
-        itemsCountTextView = findViewById(R.id.items_count)
-        clearCartButton = findViewById(R.id.clear_cart_button)
-        checkoutButton = findViewById(R.id.checkout_button)
+        setupUI()
+        loadUserData()
+    }
+
+    private fun setupUI() {
+        val recyclerView: RecyclerView = findViewById(R.id.cartRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val totalPriceTextView: TextView = findViewById(R.id.total_price)
+        val itemsCountTextView: TextView = findViewById(R.id.items_count)
+        val clearCartButton: Button = findViewById(R.id.clear_cart_button)
+        val checkoutButton: Button = findViewById(R.id.checkout_button)
         nameInput = findViewById(R.id.user_name_input)
         emailInput = findViewById(R.id.user_email_input)
-        tableNumberSpinner = findViewById(R.id.spinner_table_number)
 
-        ArrayAdapter.createFromResource(this, R.array.table_numbers, android.R.layout.simple_spinner_item).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            tableNumberSpinner.adapter = adapter
-        }
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = CartAdapter(CartManager.getCartItems()) {
-            updateTotalPrice()
-            updateItemsCount()
+        val adapter = CartAdapter(emptyList()) {
+            viewModel.updateCart()
         }
         recyclerView.adapter = adapter
 
-        loadUserData()
+        viewModel.cartItems.observe(this) { items ->
+            adapter.updateItems(items)
+        }
+        viewModel.totalPrice.observe(this) { total ->
+            totalPriceTextView.text = getString(R.string.total_price_format, total)
+        }
+        viewModel.itemsCount.observe(this) { count ->
+            itemsCountTextView.text = resources.getQuantityString(R.plurals.items_plural, count, count)
+        }
 
         clearCartButton.setOnClickListener {
-            CartManager.clearCart()
-            adapter.updateItems(CartManager.getCartItems())
-            updateTotalPrice()
-            updateItemsCount()
+            viewModel.clearCart()
         }
 
         checkoutButton.setOnClickListener {
-            checkoutOrder()
+            checkUserBalanceAndCheckout()
         }
-
-        updateTotalPrice()
-        updateItemsCount()
     }
 
     private fun loadUserData() {
         val user = auth.currentUser
-        if (user != null) {
-            firestore.collection("Users").document(user.uid).get()
+        user?.let {
+            firestore.collection("Users").document(it.uid).get()
                 .addOnSuccessListener { document ->
-                    val name = document.getString("name") ?: "Имя не указано"
-                    val email = document.getString("email") ?: "Email не указан"
-                    nameInput.setText(name)
-                    emailInput.setText(email)
+                    nameInput.setText(document.getString("name"))
+                    emailInput.setText(document.getString("email"))
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(this, "Failed to load user data: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Ошибка загрузки данных пользователя: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
-        } else {
-            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun checkoutOrder() {
+    private fun checkUserBalanceAndCheckout() {
+        val user = auth.currentUser
+        user?.let {
+            val userDoc = firestore.collection("Users").document(it.uid)
+            userDoc.get().addOnSuccessListener { document ->
+                val balance = document.getDouble("balance") ?: 0.0
+                val total = viewModel.totalPrice.value ?: 0.0
+
+                if (balance >= total) {
+                    checkout(userDoc, balance - total)
+                } else {
+                    Toast.makeText(this, "Недостаточно средств на счету", Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener { exception ->
+                Toast.makeText(this, "Ошибка проверки баланса: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun checkout(userDoc: DocumentReference, newBalance: Double) {
         val name = nameInput.text.toString()
         val email = emailInput.text.toString()
-        val tableNumber = tableNumberSpinner.selectedItem.toString()
+        val tableNumber = findViewById<Spinner>(R.id.spinner_table_number).selectedItem.toString()
+        val items = viewModel.cartItems.value ?: listOf()
+        val total = viewModel.totalPrice.value ?: 0.0
+        val orderDate = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
 
-        if (tableNumber.isBlank()) {
-            Toast.makeText(this, "Пожалуйста, выберите номер стола или опцию 'Самовывоз'", Toast.LENGTH_SHORT).show()
-            return
+        val order = Order(
+            user_name = name,
+            user_email = email,
+            table_number = tableNumber,
+            items = items.map { OrderItem(it.menuItem.name, it.menuItem.price, it.quantity) },
+            total_price = total,
+            order_date = orderDate
+        )
+
+        userDoc.update("balance", newBalance).addOnSuccessListener {
+            viewModel.createOrder(order, {
+                Toast.makeText(this, "Заказ успешно оформлен!", Toast.LENGTH_SHORT).show()
+            }, { error ->
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+            })
+        }.addOnFailureListener { exception ->
+            Toast.makeText(this, "Ошибка обновления баланса: ${exception.message}", Toast.LENGTH_SHORT).show()
         }
-
-        val items = CartManager.getCartItems()
-        val total = CartManager.getTotalPrice()
-        sendOrderToServer(name, email, tableNumber, items, total)
-    }
-
-    private fun sendOrderToServer(name: String, email: String, tableNumber: String, items: List<CartItem>, total: Double) {
-        val orderItems = items.map { OrderItem(it.menuItem.name, it.menuItem.price, it.quantity) }
-        val orderDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        val order = Order(name, email, tableNumber, orderItems, total, orderDate)
-
-        RetrofitClient.instance.createOrder(order).enqueue(object : Callback<OrderResponse> {
-            override fun onResponse(call: Call<OrderResponse>, response: Response<OrderResponse>) {
-                if (response.isSuccessful && response.body()?.success == true) {
-                    adapter.updateItems(emptyList())  // Очищаем элементы в адаптере
-                    updateTotalPrice()
-                    updateItemsCount()
-                    Toast.makeText(this@CartActivity, "Заказ оформлен", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(this@CartActivity, "Ошибка оформления заказа: ${response.message()}", Toast.LENGTH_LONG).show()
-                }
-
-            }
-
-            override fun onFailure(call: Call<OrderResponse>, t: Throwable) {
-                Toast.makeText(this@CartActivity, "Ошибка: ${t.message}", Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
-    private fun updateTotalPrice() {
-        val totalPrice = CartManager.getTotalPrice()
-        totalPriceTextView.text = getString(R.string.total_price_format, totalPrice)
-    }
-
-    private fun updateItemsCount() {
-        val itemsCount = CartManager.getCartItems().size
-        itemsCountTextView.text = resources.getQuantityString(R.plurals.items_plural, itemsCount, itemsCount)
     }
 }

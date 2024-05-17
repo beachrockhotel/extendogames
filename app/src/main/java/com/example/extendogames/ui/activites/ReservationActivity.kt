@@ -1,114 +1,128 @@
 package com.example.extendogames.ui.activites
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.Button
 import android.widget.Toast
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.util.Log
-import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.extendogames.api.services.ApiService
-import com.example.extendogames.api.models.ReservationRequest
-import com.example.extendogames.api.models.ReservationResponse
-import com.example.extendogames.api.models.User
-import com.example.extendogames.api.responses.AvailabilityResponse
+import androidx.lifecycle.Observer
+import com.example.extendogames.R
+import com.example.extendogames.ui.viewmodels.ReservationViewModel
 import java.util.Calendar
-import java.text.SimpleDateFormat
-import java.util.Locale
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
 class ReservationActivity : AppCompatActivity() {
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
-    private lateinit var apiService: ApiService
-    private var userEmail: String? = null
-    private lateinit var userName: String
+    private val viewModel: ReservationViewModel by viewModels()
+
     private lateinit var endTimeView: TextView
     private lateinit var timeView: TextView
     private lateinit var hoursSpinner: Spinner
-    private var startTime: Calendar = Calendar.getInstance()
+    private lateinit var gameStationStatusView: TextView
+    private lateinit var deviceSpecsView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.extendogames.R.layout.activity_reservation)
+        setContentView(R.layout.activity_reservation)
 
-        data class User(
-            var name: String = "",
-            var email: String = ""
-        )
-
-
-        userEmail = FirebaseAuth.getInstance().currentUser?.email
-        setupApi()
         setupViews()
-        initUserDataAndSetupListeners()
-    }
+        setupObservers()
 
-    private fun setupApi() {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+        viewModel.userProfile.observe(this, Observer { user ->
+            user?.let {
+                setupListeners()
+            }
+        })
+
+        // Получаем данные о типе устройства и его характеристиках
+        val deviceType = intent.getStringExtra("DEVICE_TYPE") ?: "Компьютер"
+        val deviceSpecs = intent.getStringExtra("DEVICE_SPECS") ?: ""
+
+        deviceSpecsView.text = deviceSpecs
+
+        // Добавляем вызов updateEndTime сразу после установки значений для dateView и timeView
+        val initialHours = hoursSpinner.selectedItem.toString().toInt()
+        endTimeView.text = viewModel.updateEndTime(initialHours)
+
+        val placeNumber = intent.getStringExtra("PLACE_NUMBER") ?: "1"
+        val date = findViewById<TextView>(R.id.textView_date).text.toString()
+        val time = findViewById<TextView>(R.id.textView_time).text.toString()
+        val duration = hoursSpinner.selectedItem.toString().toInt()
+        val costPerHour = 100.0 // Установите значение стоимости за час
+
+        viewModel.checkStationAvailability(placeNumber, date, time, duration) { isAvailable ->
+            runOnUiThread {
+                gameStationStatusView.text = if (isAvailable) "Свободна" else "Занята"
+            }
         }
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:5000/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(OkHttpClient.Builder().addInterceptor(logging).build())
-            .build()
-
-        apiService = retrofit.create(ApiService::class.java)
     }
 
     private fun setupViews() {
-        val backButton = findViewById<ImageView>(com.example.extendogames.R.id.back_arrow)
+        val backButton = findViewById<ImageView>(R.id.back_arrow)
         backButton.setOnClickListener { finish() }
 
-        endTimeView = findViewById(com.example.extendogames.R.id.end_time_view)
-        timeView = findViewById(com.example.extendogames.R.id.textView_time)
-        hoursSpinner = findViewById(com.example.extendogames.R.id.hours_spinner)
-    }
+        endTimeView = findViewById(R.id.end_time_view)
+        timeView = findViewById(R.id.textView_time)
+        hoursSpinner = findViewById(R.id.hours_spinner)
+        gameStationStatusView = findViewById(R.id.game_station_status)
+        deviceSpecsView = findViewById(R.id.textView6) // Обновим textView для характеристик устройства
 
-    private fun setupListeners() {
-        val dateView = findViewById<TextView>(com.example.extendogames.R.id.textView_date)
-        val registerButton = findViewById<Button>(com.example.extendogames.R.id.register_button)
-
-        dateView.text = dateFormat.format(Calendar.getInstance().time)
-        timeView.text = timeFormat.format(Calendar.getInstance().time)
-
-        dateView.setOnClickListener {
-            showDatePickerDialog { date -> dateView.text = date }
-        }
-
-        timeView.setOnClickListener {
-            showTimePickerDialog { time -> timeView.text = time }
-        }
+        val dateView = findViewById<TextView>(R.id.textView_date)
+        dateView.text = viewModel.dateFormat.format(Calendar.getInstance().time)
+        timeView.text = viewModel.timeFormat.format(Calendar.getInstance().time)
 
         ArrayAdapter.createFromResource(
             this,
-            com.example.extendogames.R.array.hours_array,
+            R.array.hours_array,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             hoursSpinner.adapter = adapter
         }
+    }
+
+    private fun setupObservers() {
+        viewModel.message.observe(this, Observer { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun setupListeners() {
+        val dateView = findViewById<TextView>(R.id.textView_date)
+        val registerButton = findViewById<Button>(R.id.register_button)
+
+        dateView.setOnClickListener {
+            viewModel.showDatePickerDialog(this) { date ->
+                dateView.text = date
+                Log.d("ReservationActivity", "Date selected: $date")
+            }
+        }
+
+        timeView.setOnClickListener {
+            viewModel.showTimePickerDialog(this, hoursSpinner.selectedItem.toString().toInt()) { time ->
+                timeView.text = time
+                // Обновление времени начала
+                viewModel.updateStartTime(time)
+                // Обновление времени окончания после выбора времени начала
+                val endTime = viewModel.updateEndTime(hoursSpinner.selectedItem.toString().toInt())
+                endTimeView.text = endTime
+                Log.d("ReservationActivity", "Time selected: $time, End time: $endTime")
+            }
+        }
 
         hoursSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                updateEndTime()
+                val endTime = viewModel.updateEndTime(hoursSpinner.selectedItem.toString().toInt())
+                endTimeView.text = endTime
+                Log.d("ReservationActivity", "Hours selected: ${hoursSpinner.selectedItem.toString()}, End time: $endTime")
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -119,110 +133,9 @@ class ReservationActivity : AppCompatActivity() {
             val date = dateView.text.toString()
             val time = timeView.text.toString()
             val duration = hoursSpinner.selectedItem.toString().toInt()
-            checkAvailabilityAndReserve(placeNumber, date, time, duration)
+            val costPerHour = 100.0 // Установите значение стоимости за час
+            viewModel.checkAvailabilityAndReserve(placeNumber, date, time, duration, costPerHour)
+            Log.d("ReservationActivity", "Register clicked: placeNumber=$placeNumber, date=$date, time=$time, duration=$duration")
         }
-    }
-
-    private fun initUserDataAndSetupListeners() {
-        getUserNameFromFirestore { userName ->
-            this.userName = userName
-            setupListeners()
-        }
-    }
-
-    private fun updateEndTime() {
-        val duration = hoursSpinner.selectedItem.toString().toInt()
-        val endTime = (startTime.clone() as Calendar).apply {
-            add(Calendar.HOUR, duration)
-        }
-        endTimeView.text = "Станция будет забронирована до: " + timeFormat.format(endTime.time)
-    }
-
-    private fun getUserNameFromFirestore(onResult: (String) -> Unit) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId == null) {
-            Toast.makeText(this, "Пользователь не авторизован", Toast.LENGTH_LONG).show()
-            return
-        }
-        val db = FirebaseFirestore.getInstance()
-        db.collection("Users").document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val user = document.toObject(User::class.java)
-                    onResult(user?.name ?: "Default User")
-                } else {
-                    Log.d("Firestore", "No such document")
-                    onResult("Default User")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("Firestore", "get failed with ", exception)
-                Toast.makeText(this, "Ошибка при загрузке данных пользователя: ${exception.message}", Toast.LENGTH_LONG).show()
-                onResult("Default User")
-            }
-    }
-
-    private fun checkAvailabilityAndReserve(placeNumber: String, date: String, time: String, duration: Int) {
-        val checkRequest = ReservationRequest(placeNumber, date, time, duration, userEmail!!, userName)
-
-        apiService.checkAvailability(checkRequest).enqueue(object : Callback<AvailabilityResponse> {
-            override fun onResponse(call: Call<AvailabilityResponse>, response: Response<AvailabilityResponse>) {
-                if (response.isSuccessful && response.body()?.available == true) {
-                    reservePlace(placeNumber, date, time, duration)
-                } else {
-                    Toast.makeText(applicationContext, "Место уже забронировано в выбранное время", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onFailure(call: Call<AvailabilityResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "Ошибка при проверке доступности: ${t.message}", Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
-
-    private fun reservePlace(placeNumber: String, date: String, time: String, duration: Int) {
-        val userEmail = FirebaseAuth.getInstance().currentUser?.email
-        if (userEmail == null) {
-            Toast.makeText(this, "Пользователь не авторизован или адрес электронной почты недоступен", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        val reservationRequest = ReservationRequest(placeNumber, date, time, duration, userEmail, userName)
-        apiService.reserveSeat(reservationRequest).enqueue(object : Callback<ReservationResponse> {
-            override fun onResponse(call: Call<ReservationResponse>, response: Response<ReservationResponse>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(applicationContext, response.body()?.message, Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(applicationContext, "Ошибка бронирования", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onFailure(call: Call<ReservationResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "Ошибка сети: ${t.message}", Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
-    private fun showDatePickerDialog(onDateSet: (String) -> Unit) {
-        DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            val calendar = Calendar.getInstance().apply {
-                set(year, month, dayOfMonth)
-            }
-            onDateSet(dateFormat.format(calendar.time))
-        }, startTime.get(Calendar.YEAR), startTime.get(Calendar.MONTH), startTime.get(Calendar.DAY_OF_MONTH)).show()
-    }
-
-    private fun showTimePickerDialog(onTimeSet: (String) -> Unit) {
-        TimePickerDialog(this, { _, hourOfDay, minute ->
-            startTime = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, hourOfDay)
-                set(Calendar.MINUTE, minute)
-            }
-            val formattedTime = timeFormat.format(startTime.time)
-            onTimeSet(formattedTime)
-            updateEndTime()
-        }, startTime.get(Calendar.HOUR_OF_DAY), startTime.get(Calendar.MINUTE), true).show()
     }
 }

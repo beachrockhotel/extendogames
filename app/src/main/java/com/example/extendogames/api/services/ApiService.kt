@@ -1,5 +1,6 @@
 package com.example.extendogames.api.services
 
+import com.example.extendogames.api.models.Answer
 import com.example.extendogames.api.responses.AvailabilityResponse
 import com.example.extendogames.api.models.MenuItem
 import com.example.extendogames.api.models.MenuResponse
@@ -7,6 +8,7 @@ import com.example.extendogames.api.responses.NewsResponse
 import com.example.extendogames.api.requests.NotificationRequest
 import com.example.extendogames.api.responses.NotificationResponse
 import com.example.extendogames.api.models.Order
+import com.example.extendogames.api.models.Question
 import com.example.extendogames.api.responses.OrderResponse
 import com.example.extendogames.api.responses.OrdersResponse
 import com.example.extendogames.api.requests.PhoneNumberRequest
@@ -22,6 +24,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -76,10 +79,18 @@ interface ApiService {
     @POST("support_phone")
     fun sendPhoneNumber(@Body request: PhoneNumberRequest): Call<Void>
 
-
     @GET("support_phone_numbers")
     fun getSupportPhoneNumbers(): Call<List<PhoneNumberResponse>>
 
     @POST("send-notification")
     fun sendNotification(@Body data: NotificationRequest): Call<NotificationResponse>
+
+    @GET("/questions")
+    fun getQuestions(): Call<List<Question>>
+
+    @POST("/questions")
+    fun postQuestion(@Body question: Question): Call<Void>
+
+    @POST("/questions/{id}/answers")
+    fun postAnswer(@Path("id") id: Int, @Body answer: Answer): Call<Void>
 }

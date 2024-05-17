@@ -42,4 +42,3 @@ class AdminReservationHistoryAdapter(private var reservations: List<ReservationR
         notifyDataSetChanged()
     }
 }
-

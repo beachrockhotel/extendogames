@@ -8,7 +8,7 @@ data class ReservationResponse(
     val seat_number: String,
     val user_email: String,
     val user_name: String,
-    val message: String
+    val message: String,
 )
 
 
@@ -18,7 +18,8 @@ data class ReservationRequest(
     val time: String,
     val duration: Int,
     val userEmail: String,
-    val userName: String
+    val userName: String,
 )
+
 
 

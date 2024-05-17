@@ -2,35 +2,64 @@ package com.example.extendogames.ui.activites
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Button
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.extendogames.R
+import com.example.extendogames.ui.viewmodels.ProfileViewModel
 
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var profileImage: ImageView
     private lateinit var userName: TextView
     private lateinit var userEmail: TextView
+    private lateinit var userBalance: TextView
     private lateinit var editProfileButton: Button
     private lateinit var accountButton1: Button
-    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
         initializeUI()
-        loadProfileFromFirestore()
+
+        viewModel.userName.observe(this, Observer { name ->
+            userName.text = name
+        })
+
+        viewModel.userEmail.observe(this, Observer { email ->
+            userEmail.text = email
+        })
+
+        viewModel.profileImageUrl.observe(this, Observer { url ->
+            if (url != null) {
+                Glide.with(this).load(url).into(profileImage)
+            } else {
+                profileImage.setImageResource(R.drawable.game_station_icon)
+            }
+        })
+
+        viewModel.balance.observe(this, Observer { balance ->
+            userBalance.text = "Баланс: $balance руб."
+        })
+
+        viewModel.error.observe(this, Observer { error ->
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+            }
+        })
 
         val logoutButton = findViewById<Button>(R.id.logout_button)
         logoutButton.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
+            viewModel.logout()
             val intent = Intent(this, AuthActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -38,11 +67,17 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Обновляем состояние данных при возвращении к ProfileActivity
+        viewModel.loadProfileFromFirestore()
+    }
 
     private fun initializeUI() {
         profileImage = findViewById(R.id.profile_image)
         userName = findViewById(R.id.user_name)
         userEmail = findViewById(R.id.user_email)
+        userBalance = findViewById(R.id.user_balance)
         editProfileButton = findViewById(R.id.edit_profile_button)
         accountButton1 = findViewById(R.id.AccountButton_1)
 
@@ -51,7 +86,7 @@ class ProfileActivity : AppCompatActivity() {
 
         accountButton1.setOnClickListener {
             val intent = Intent(this, ProfileEditActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE)
         }
 
         val historyButton = findViewById<Button>(R.id.reservation_history_button)
@@ -73,27 +108,15 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadProfileFromFirestore() {
-        val userId = auth.currentUser?.uid
-        if (userId != null) {
-            firestore.collection("Users").document(userId).get().addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val name = document.getString("name") ?: "Имя не указано"
-                    val email = auth.currentUser?.email ?: "Email не указан"
-                    val photoUrl = auth.currentUser?.photoUrl
-
-                    userName.text = name
-                    userEmail.text = email
-                    Glide.with(this).load(photoUrl).into(profileImage)
-                } else {
-                    userName.text = "Пользователь не найден"
-                    userEmail.text = "Email не указан"
-                }
-            }.addOnFailureListener { e ->
-                userName.text = "Ошибка загрузки данных"
-                userEmail.text = "Email не указан"
-                e.printStackTrace()
-            }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PROFILE_EDIT_REQUEST_CODE && resultCode == RESULT_OK) {
+            // Обновляем данные профиля после возвращения из ProfileEditActivity
+            viewModel.loadProfileFromFirestore()
         }
+    }
+
+    companion object {
+        const val PROFILE_EDIT_REQUEST_CODE = 1
     }
 }

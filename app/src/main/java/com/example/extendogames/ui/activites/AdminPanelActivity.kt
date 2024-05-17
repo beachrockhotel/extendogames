@@ -35,5 +35,12 @@ class AdminPanelActivity : AppCompatActivity() {
             val intent = Intent(this, AdminSupportPhoneActivity::class.java)
             startActivity(intent)
         }
+
+        val balanceAdminButton = findViewById<Button>(R.id.balance_admin_button)
+        balanceAdminButton.setOnClickListener {
+            val intent = Intent(this, AdminBalanceActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
+

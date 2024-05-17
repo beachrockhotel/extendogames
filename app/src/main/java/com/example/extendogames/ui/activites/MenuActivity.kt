@@ -6,20 +6,20 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.extendogames.R
 import com.example.extendogames.api.services.RetrofitClient
-import com.example.extendogames.api.models.MenuItem
-import com.example.extendogames.api.models.MenuResponse
-import com.example.extendogames.managers.CartManager
 import com.example.extendogames.ui.adapters.MenuAdapter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.extendogames.ui.factory.MenuViewModelFactory
+import com.example.extendogames.ui.viewmodels.MenuViewModel
 
 class MenuActivity : AppCompatActivity() {
+    private val viewModel: MenuViewModel by viewModels {
+        MenuViewModelFactory(RetrofitClient.instance)
+    }
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MenuAdapter
@@ -31,16 +31,20 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
 
         recyclerView = findViewById(R.id.recycler_view_menu)
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
         searchView = findViewById(R.id.search_view)
         viewCartButton = findViewById(R.id.view_cart_button)
 
+        recyclerView.layoutManager = GridLayoutManager(this, 2)
         adapter = MenuAdapter(emptyList()) { menuItem, quantity ->
-            addToCart(menuItem, quantity)
+            viewModel.addToCart(menuItem, quantity)
         }
         recyclerView.adapter = adapter
 
-        loadProducts()
+        viewModel.menuItems.observe(this) { menuItems ->
+            adapter.updateItems(menuItems)
+        }
+
+        viewModel.loadMenuItems()
 
         searchView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -54,25 +58,5 @@ class MenuActivity : AppCompatActivity() {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    private fun loadProducts() {
-        RetrofitClient.instance.getMenuItems().enqueue(object : Callback<MenuResponse> {
-            override fun onResponse(call: Call<MenuResponse>, response: Response<MenuResponse>) {
-                if (response.isSuccessful) {
-                    adapter = MenuAdapter(response.body()?.menu ?: emptyList()) { menuItem, quantity ->
-                        addToCart(menuItem, quantity)
-                    }
-                    recyclerView.adapter = adapter
-                }
-            }
-
-            override fun onFailure(call: Call<MenuResponse>, t: Throwable) {
-            }
-        })
-    }
-
-    private fun addToCart(menuItem: MenuItem, quantity: Int) {
-        CartManager.addToCart(menuItem, quantity)
     }
 }

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.extendogames.api.models.ReservationResponse
 
-class ReservationAdapter : RecyclerView.Adapter<ReservationAdapter.ViewHolder>() {
+class ReservationHistoryAdapter : RecyclerView.Adapter<ReservationHistoryAdapter.ViewHolder>() {
     private var reservations: List<ReservationResponse> = listOf()
 
     fun updateData(newReservations: List<ReservationResponse>) {

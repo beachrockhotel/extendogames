@@ -13,8 +13,11 @@ import com.example.extendogames.api.models.TournamentItem
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TournamentAdapter(private val context: Context, private val tournamentList: ArrayList<TournamentItem>, private val listener: OnItemClickListener) :
-    RecyclerView.Adapter<TournamentAdapter.TournamentViewHolder>() {
+class TournamentAdapter(
+    private val context: Context,
+    private var tournamentList: ArrayList<TournamentItem>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<TournamentAdapter.TournamentViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -31,6 +34,15 @@ class TournamentAdapter(private val context: Context, private val tournamentList
     }
 
     override fun getItemCount() = tournamentList.size
+
+    fun setTournaments(tournaments: List<TournamentItem>) {
+        this.tournamentList = ArrayList(tournaments)
+        notifyDataSetChanged()
+    }
+
+    fun getTournamentAt(position: Int): TournamentItem {
+        return tournamentList[position]
+    }
 
     class TournamentViewHolder(itemView: View, private val listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
         private val title: TextView = itemView.findViewById(R.id.tournamentTitle)
@@ -69,6 +81,5 @@ class TournamentAdapter(private val context: Context, private val tournamentList
                 listener.onItemClick(adapterPosition)
             }
         }
-
     }
 }

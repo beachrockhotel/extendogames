@@ -19,6 +19,17 @@ object CartManager {
         }
     }
 
+    fun decreaseQuantity(item: MenuItem) {
+        val existingItem = cartItems.find { it.menuItem.id == item.id }
+        if (existingItem != null) {
+            if (existingItem.quantity > 1) {
+                existingItem.quantity--
+            } else {
+                cartItems.remove(existingItem)
+            }
+        }
+    }
+
     fun removeFromCart(item: MenuItem) {
         val index = cartItems.indexOfFirst { it.menuItem.id == item.id }
         if (index != -1) {

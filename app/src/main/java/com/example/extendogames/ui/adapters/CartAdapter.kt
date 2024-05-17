@@ -12,13 +12,9 @@ import com.example.extendogames.R
 import com.example.extendogames.api.models.CartItem
 
 class CartAdapter(
-    private var items: MutableList<CartItem>,
+    private var items: List<CartItem>,
     private val onUpdate: () -> Unit
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
-
-    init {
-        setHasStableIds(true)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_item, parent, false)
@@ -29,36 +25,11 @@ class CartAdapter(
         holder.bind(items[position])
     }
 
-    override fun getItemCount() = items.size
-
-    override fun getItemId(position: Int): Long {
-        return items[position].menuItem.id.toLong()
-    }
+    override fun getItemCount(): Int = items.size
 
     fun updateItems(newItems: List<CartItem>) {
-        items.clear()
-        items.addAll(newItems)
+        items = newItems
         notifyDataSetChanged()
-    }
-
-    fun removeItem(position: Int) {
-        if (position < items.size) {
-            items.removeAt(position)
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, items.size)
-        }
-        onUpdate()
-    }
-
-    fun decreaseItemQuantity(position: Int) {
-        val item = items[position]
-        if (item.quantity > 1) {
-            item.quantity--
-            notifyItemChanged(position)
-        } else {
-            removeItem(position)
-        }
-        onUpdate()
     }
 
     inner class CartViewHolder(
@@ -84,11 +55,18 @@ class CartAdapter(
             Glide.with(itemView.context)
                 .load(cartItem.menuItem.image_url)
                 .placeholder(R.drawable.ic_launcher_foreground)
-                .error(R.drawable.cyberclubplan_background)
+                .error(R.drawable.ic_launcher_background)
                 .into(imageView)
 
             decreaseButton.setOnClickListener {
-                decreaseItemQuantity(adapterPosition)
+                if (cartItem.quantity > 1) {
+                    cartItem.quantity--
+                    notifyItemChanged(adapterPosition)
+                } else {
+                    (items as MutableList).removeAt(adapterPosition)
+                    notifyItemRemoved(adapterPosition)
+                }
+                onUpdate()
             }
 
             increaseButton.setOnClickListener {
