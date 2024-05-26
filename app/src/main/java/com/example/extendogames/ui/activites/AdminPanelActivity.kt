@@ -26,7 +26,7 @@ class AdminPanelActivity : AppCompatActivity() {
 
         val supportEmailButton = findViewById<Button>(R.id.support_email_button)
         supportEmailButton.setOnClickListener {
-            val intent = Intent(this, AdminSupportListActivity::class.java)
+            val intent = Intent(this, AdminSupportEmailActivity::class.java)
             startActivity(intent)
         }
 

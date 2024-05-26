@@ -9,7 +9,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AdminSupportListViewModel : ViewModel() {
+class AdminSupportEmailViewModel : ViewModel() {
 
     private val _supportRequests = MutableLiveData<List<SupportRequest>>()
     val supportRequests: LiveData<List<SupportRequest>> get() = _supportRequests

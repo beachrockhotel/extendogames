@@ -15,8 +15,9 @@ class SupportPhoneViewModel(application: Application) : AndroidViewModel(applica
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
-    fun sendPhoneNumber(phoneNumber: String) {
-        RetrofitClient.instance.sendPhoneNumber(PhoneNumberRequest(phoneNumber))
+    fun sendPhoneNumber(phoneNumber: String, email: String, name: String) {
+        val request = PhoneNumberRequest(phoneNumber, email, name)
+        RetrofitClient.instance.sendPhoneNumber(request)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
@@ -32,3 +33,4 @@ class SupportPhoneViewModel(application: Application) : AndroidViewModel(applica
             })
     }
 }
+

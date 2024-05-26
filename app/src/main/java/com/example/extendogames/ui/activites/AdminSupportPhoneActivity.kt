@@ -26,7 +26,7 @@ class AdminSupportPhoneActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.phoneNumbers.observe(this, Observer { phoneNumbers ->
-            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, phoneNumbers.map { it.phoneNumber })
+            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, phoneNumbers.map { "${it.phoneNumber}, ${it.name}, ${it.email}" })
             listView.adapter = adapter
         })
 

@@ -31,7 +31,6 @@ class AdminOrderHistoryAdapter(private var orders: List<Order>) :
         private val userNameTextView: TextView = itemView.findViewById(R.id.userNameTextView)
         private val userEmailTextView: TextView = itemView.findViewById(R.id.userEmailTextView)
         private val totalPriceTextView: TextView = itemView.findViewById(R.id.totalPriceTextView)
-        private val orderDateTextView: TextView = itemView.findViewById(R.id.orderDateTextView)
         private val itemsDetailTextView: TextView = itemView.findViewById(R.id.itemsDetailTextView)
 
         fun bind(order: Order) {
@@ -39,7 +38,6 @@ class AdminOrderHistoryAdapter(private var orders: List<Order>) :
             userNameTextView.text = "Имя: ${order.user_name}"
             userEmailTextView.text = "Почта: ${order.user_email}"
             totalPriceTextView.text = "Сумма: ${order.total_price} руб"
-            orderDateTextView.text = "Время заказа: ${formatDate(order.order_date)}"
             itemsDetailTextView.text = buildString {
                 append("Товары:\n")
                 order.items.forEach { item ->

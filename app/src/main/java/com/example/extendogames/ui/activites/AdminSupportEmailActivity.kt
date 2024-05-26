@@ -8,12 +8,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.extendogames.R
-import com.example.extendogames.ui.viewmodels.AdminSupportListViewModel
+import com.example.extendogames.ui.viewmodels.AdminSupportEmailViewModel
 
-class AdminSupportListActivity : AppCompatActivity() {
+class AdminSupportEmailActivity : AppCompatActivity() {
 
     private lateinit var listView: ListView
-    private val viewModel: AdminSupportListViewModel by viewModels()
+    private val viewModel: AdminSupportEmailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ class AdminSupportListActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.supportRequests.observe(this, Observer { supportRequests ->
-            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, supportRequests.map { it.email + " - " + it.question })
+            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, supportRequests.map { "${it.email} - ${it.name} - ${it.question}" })
             listView.adapter = adapter
         })
 
@@ -35,3 +35,4 @@ class AdminSupportListActivity : AppCompatActivity() {
         })
     }
 }
+

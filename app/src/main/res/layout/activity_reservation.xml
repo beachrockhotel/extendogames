@@ -89,8 +89,8 @@
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="259dp"
-        android:layout_height="71dp"
+        android:layout_width="261dp"
+        android:layout_height="81dp"
         android:text="Intel Core i5-10400F, NVIDIA GeForce RTX 2070 Super 8 Gb, 16 Gb DDR4, SSD+HDD, Монитор: ASUS 24,5, 165Гц, Интернет: 500 МБит/с"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -161,7 +161,7 @@
         app:layout_constraintHorizontal_bias="0.051"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.247" />
+        app:layout_constraintVertical_bias="0.267" />
 
     <TextView
         android:id="@+id/textView7"
@@ -175,7 +175,7 @@
         app:layout_constraintHorizontal_bias="0.053"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.355" />
+        app:layout_constraintVertical_bias="0.366" />
 
     <TextView
         android:id="@+id/textView8"
@@ -209,15 +209,15 @@
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Стоимость:"
         android:fontFamily="@font/roboto_medium"
+        android:text="Стоимость:"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.071"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.595" />
+        app:layout_constraintVertical_bias="0.633" />
 
     <TextView
         android:id="@+id/textView10"
@@ -226,10 +226,10 @@
         android:text="1 час - 100 рублей"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.337"
+        app:layout_constraintHorizontal_bias="0.372"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.595" />
+        app:layout_constraintVertical_bias="0.633" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

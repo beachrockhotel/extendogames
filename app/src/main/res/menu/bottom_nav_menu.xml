@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home"
+        android:title="Главная" />
+    <item
+        android:id="@+id/navigation_news"
+        android:icon="@drawable/document"
+        android:title="Новости" />
+    <item
+        android:id="@+id/navigation_menu"
+        android:icon="@drawable/buy"
+        android:title="Меню" />
+    <item
+        android:id="@+id/navigation_tournaments"
+        android:icon="@drawable/tournament"
+        android:title="Турниры" />
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/profile"
+        android:title="Профиль" />
+</menu>

@@ -1,0 +1,5 @@
+<resources>
+    <style name="BottomNavigationText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

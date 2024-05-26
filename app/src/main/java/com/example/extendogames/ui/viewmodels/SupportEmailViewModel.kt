@@ -16,8 +16,8 @@ class SupportEmailViewModel(application: Application) : AndroidViewModel(applica
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
-    fun sendSupportRequest(email: String, question: String) {
-        val request = SupportRequest(email, question)
+    fun sendSupportRequest(email: String, question: String, name: String) {
+        val request = SupportRequest(email, question, name)
         RetrofitClient.instance.sendSupportRequest(request)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {

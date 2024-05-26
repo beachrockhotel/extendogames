@@ -22,11 +22,5 @@ class SupportActivity : AppCompatActivity() {
             val intent = Intent(this, SupportPhoneActivity::class.java)
             startActivity(intent)
         }
-
-        val supportCallButton = findViewById<Button>(R.id.support_call_button)
-        supportCallButton.setOnClickListener {
-            val intent = Intent(this, SupportCallActivity::class.java)
-            startActivity(intent)
-        }
     }
 }

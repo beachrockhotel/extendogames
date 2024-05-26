@@ -1,6 +1,8 @@
 package com.example.extendogames.ui.activites
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -9,8 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.extendogames.R
 import com.example.extendogames.ui.viewmodels.TournamentRegistrationViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class TournamentRegistrationActivity : AppCompatActivity() {
+class TournamentRegistrationActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private lateinit var nameEditText: EditText
     private lateinit var emailEditText: EditText
     private lateinit var teamNameEditText: EditText
@@ -18,6 +21,7 @@ class TournamentRegistrationActivity : AppCompatActivity() {
     private lateinit var registerButton: Button
     private lateinit var tournamentNameEditText: EditText
     private lateinit var tournamentDisciplineEditText: EditText
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     private val viewModel: TournamentRegistrationViewModel by viewModels()
 
@@ -27,6 +31,10 @@ class TournamentRegistrationActivity : AppCompatActivity() {
 
         initializeUI()
         setupObservers()
+
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavigationView.setOnNavigationItemSelectedListener(this)
+        bottomNavigationView.selectedItemId = R.id.navigation_tournaments
 
         intent?.let {
             val tournamentName = it.getStringExtra("TOURNAMENT_NAME") ?: "Default Name"
@@ -69,5 +77,34 @@ class TournamentRegistrationActivity : AppCompatActivity() {
         viewModel.message.observe(this, Observer { message ->
             message?.let { Toast.makeText(this, it, Toast.LENGTH_LONG).show() }
         })
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.navigation_home -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_news -> {
+                val intent = Intent(this, NewsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_menu -> {
+                val intent = Intent(this, MenuActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_tournaments -> {
+                return true
+            }
+            R.id.navigation_profile -> {
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+        }
+        return false
     }
 }

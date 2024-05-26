@@ -36,7 +36,6 @@ class ProfileEditViewModel : ViewModel() {
             _userProfile.value = user
             _userName.value = user.displayName
 
-            // Загружаем дополнительную информацию о пользователе из Firestore
             firestore.collection("Users").document(user.uid).get()
                 .addOnSuccessListener { document ->
                     if (document.exists()) {

@@ -69,7 +69,6 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Обновляем состояние данных при возвращении к ProfileActivity
         viewModel.loadProfileFromFirestore()
     }
 
@@ -92,6 +91,24 @@ class ProfileActivity : AppCompatActivity() {
         val historyButton = findViewById<Button>(R.id.reservation_history_button)
         historyButton.setOnClickListener {
             val intent = Intent(this, ReservationHistoryActivity::class.java)
+            startActivity(intent)
+        }
+
+        val questionButton = findViewById<Button>(R.id.question_button)
+        questionButton.setOnClickListener {
+            val intent = Intent(this, QuestionActivity::class.java)
+            startActivity(intent)
+        }
+
+        val reviewButton = findViewById<Button>(R.id.review_button)
+        reviewButton.setOnClickListener {
+            val intent = Intent(this, ReviewActivity::class.java)
+            startActivity(intent)
+        }
+
+        val contactsButton = findViewById<Button>(R.id.contacts_button)
+        contactsButton.setOnClickListener {
+            val intent = Intent(this, ContactsActivity::class.java)
             startActivity(intent)
         }
 

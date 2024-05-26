@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.viewModels
@@ -15,8 +16,9 @@ import com.example.extendogames.api.services.RetrofitClient
 import com.example.extendogames.ui.adapters.MenuAdapter
 import com.example.extendogames.ui.factory.MenuViewModelFactory
 import com.example.extendogames.ui.viewmodels.MenuViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MenuActivity : AppCompatActivity() {
+class MenuActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private val viewModel: MenuViewModel by viewModels {
         MenuViewModelFactory(RetrofitClient.instance)
     }
@@ -25,6 +27,7 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var adapter: MenuAdapter
     private lateinit var viewCartButton: Button
     private lateinit var searchView: EditText
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +36,7 @@ class MenuActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recycler_view_menu)
         searchView = findViewById(R.id.search_view)
         viewCartButton = findViewById(R.id.view_cart_button)
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
 
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         adapter = MenuAdapter(emptyList()) { menuItem, quantity ->
@@ -58,5 +62,38 @@ class MenuActivity : AppCompatActivity() {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(this)
+
+        bottomNavigationView.selectedItemId = R.id.navigation_menu
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.navigation_home -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_news -> {
+                val intent = Intent(this, NewsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_menu -> {
+                return true
+            }
+            R.id.navigation_tournaments -> {
+                val intent = Intent(this, TournamentActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_profile -> {
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+        }
+        return false
     }
 }

@@ -2,6 +2,7 @@ package com.example.extendogames.ui.activites
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import androidx.activity.viewModels
@@ -9,10 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.extendogames.R
 import com.example.extendogames.api.services.ApiService
 import com.example.extendogames.ui.factory.MainViewModelFactory
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private val mainViewModel: MainViewModel by viewModels {
         MainViewModelFactory(apiService)
     }
@@ -28,11 +30,13 @@ class MainActivity : AppCompatActivity() {
 
         val userPrivileges = intent.getBooleanExtra("userPrivileges", false)
         setupAdminButton(userPrivileges)
+
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setOnNavigationItemSelectedListener(this)
     }
 
     override fun onResume() {
         super.onResume()
-        // Обновляем состояние кнопок при возвращении к MainActivity
         updateButtonsState()
     }
 
@@ -59,7 +63,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        setupControlButtons()
     }
 
     private fun updateButtonsState() {
@@ -75,64 +78,6 @@ class MainActivity : AppCompatActivity() {
         adminPanelButton.visibility = if (userPrivileges) View.VISIBLE else View.GONE
         adminPanelButton.setOnClickListener {
             val intent = Intent(this, AdminPanelActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
-    }
-
-    private fun setupControlButtons() {
-        val profileButton = findViewById<Button>(R.id.button_profile)
-        profileButton.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
-
-        val newsButton = findViewById<Button>(R.id.button_news)
-        newsButton.setOnClickListener {
-            val intent = Intent(this, NewsActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
-
-        val tournamentButton = findViewById<Button>(R.id.button_tournament)
-        tournamentButton.setOnClickListener {
-            val intent = Intent(this, TournamentActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
-
-        val menuButton = findViewById<Button>(R.id.button_menu)
-        menuButton.setOnClickListener {
-            val intent = Intent(this, MenuActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
-
-        val reviewButton = findViewById<Button>(R.id.button_review)
-        reviewButton.setOnClickListener {
-            val intent = Intent(this, ReviewActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
-
-        val contactsButton = findViewById<Button>(R.id.button_contacts)
-        contactsButton.setOnClickListener {
-            val intent = Intent(this, ContactsActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
-
-        val questionsButton = findViewById<Button>(R.id.button_questions)
-        questionsButton.setOnClickListener {
-            val intent = Intent(this, QuestionActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             }
             startActivity(intent)
@@ -155,5 +100,34 @@ class MainActivity : AppCompatActivity() {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         }
         startActivity(intent)
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.navigation_home -> {
+                return true
+            }
+            R.id.navigation_news -> {
+                val intent = Intent(this, NewsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_menu -> {
+                val intent = Intent(this, MenuActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_tournaments -> {
+                val intent = Intent(this, TournamentActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_profile -> {
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+        }
+        return false
     }
 }
