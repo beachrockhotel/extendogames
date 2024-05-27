@@ -129,6 +129,14 @@
             android:name=".ui.activites.QuestionActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".ui.activites.AdminReservationStatisticsActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ui.activites.AdminFoodOrderStatisticsActivity"
+            android:exported="true" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

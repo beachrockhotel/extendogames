@@ -41,6 +41,18 @@ class AdminPanelActivity : AppCompatActivity() {
             val intent = Intent(this, AdminBalanceActivity::class.java)
             startActivity(intent)
         }
+
+        val reservationStatisticsAdminButton = findViewById<Button>(R.id.reservation_statistics_admin_button)
+        reservationStatisticsAdminButton.setOnClickListener {
+            val intent = Intent(this, AdminReservationStatisticsActivity::class.java)
+            startActivity(intent)
+        }
+
+        val foodOrderStatisticsAdminButton = findViewById<Button>(R.id.food_order_statistics_admin_button)
+        foodOrderStatisticsAdminButton.setOnClickListener {
+            val intent = Intent(this, AdminFoodOrderStatisticsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 
