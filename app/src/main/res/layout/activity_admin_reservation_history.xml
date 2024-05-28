@@ -34,8 +34,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reservationRecyclerView"
-        android:layout_width="413dp"
-        android:layout_height="844dp"
+        android:layout_width="408dp"
+        android:layout_height="785dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

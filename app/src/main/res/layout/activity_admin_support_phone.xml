@@ -34,8 +34,8 @@
 
     <ListView
         android:id="@+id/lvPhoneNumbers"
-        android:layout_width="412dp"
-        android:layout_height="836dp"
+        android:layout_width="410dp"
+        android:layout_height="761dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

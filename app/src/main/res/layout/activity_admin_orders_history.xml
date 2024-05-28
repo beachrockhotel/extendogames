@@ -34,8 +34,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderHistoryRecyclerView"
-        android:layout_width="415dp"
-        android:layout_height="834dp"
+        android:layout_width="417dp"
+        android:layout_height="788dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
