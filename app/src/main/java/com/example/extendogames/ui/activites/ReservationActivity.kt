@@ -3,13 +3,13 @@ package com.example.extendogames.ui.activites
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.Button
-import android.widget.Toast
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -40,13 +40,11 @@ class ReservationActivity : AppCompatActivity() {
             }
         })
 
-        // Получаем данные о типе устройства и его характеристиках
         val deviceType = intent.getStringExtra("DEVICE_TYPE") ?: "Компьютер"
         val deviceSpecs = intent.getStringExtra("DEVICE_SPECS") ?: ""
 
         deviceSpecsView.text = deviceSpecs
 
-        // Добавляем вызов updateEndTime сразу после установки значений для dateView и timeView
         val initialHours = hoursSpinner.selectedItem.toString().toInt()
         endTimeView.text = viewModel.updateEndTime(initialHours)
 
@@ -54,7 +52,7 @@ class ReservationActivity : AppCompatActivity() {
         val date = findViewById<TextView>(R.id.textView_date).text.toString()
         val time = findViewById<TextView>(R.id.textView_time).text.toString()
         val duration = hoursSpinner.selectedItem.toString().toInt()
-        val costPerHour = 100.0 // Установите значение стоимости за час
+        val costPerHour = 100.0
 
         viewModel.checkStationAvailability(placeNumber, date, time, duration) { isAvailable ->
             runOnUiThread {
@@ -71,7 +69,7 @@ class ReservationActivity : AppCompatActivity() {
         timeView = findViewById(R.id.textView_time)
         hoursSpinner = findViewById(R.id.hours_spinner)
         gameStationStatusView = findViewById(R.id.game_station_status)
-        deviceSpecsView = findViewById(R.id.textView6) // Обновим textView для характеристик устройства
+        deviceSpecsView = findViewById(R.id.textView6)
 
         val dateView = findViewById<TextView>(R.id.textView_date)
         dateView.text = viewModel.dateFormat.format(Calendar.getInstance().time)
@@ -109,9 +107,7 @@ class ReservationActivity : AppCompatActivity() {
         timeView.setOnClickListener {
             viewModel.showTimePickerDialog(this, hoursSpinner.selectedItem.toString().toInt()) { time ->
                 timeView.text = time
-                // Обновление времени начала
                 viewModel.updateStartTime(time)
-                // Обновление времени окончания после выбора времени начала
                 val endTime = viewModel.updateEndTime(hoursSpinner.selectedItem.toString().toInt())
                 endTimeView.text = endTime
                 Log.d("ReservationActivity", "Time selected: $time, End time: $endTime")

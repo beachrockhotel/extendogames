@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModel
 import com.example.extendogames.api.models.NewsItem
 import com.example.extendogames.api.responses.NewsResponse
 import com.example.extendogames.api.services.ApiService
+import com.example.extendogames.api.services.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class NewsViewModel : ViewModel() {
     private val _newsItems = MutableLiveData<List<NewsItem>>()
@@ -19,15 +18,9 @@ class NewsViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
-    private val newsService: ApiService
+    private val newsService: ApiService = RetrofitClient.instance
 
     init {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:5000/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        newsService = retrofit.create(ApiService::class.java)
         loadNews()
     }
 

@@ -33,8 +33,6 @@ class OrderHistoryAdapter(private var orders: MutableList<Order> = mutableListOf
         notifyDataSetChanged()
     }
 
-
-
     class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val summaryTextView: TextView = itemView.findViewById(R.id.order_summary)
         private val detailsTextView: TextView = itemView.findViewById(R.id.order_details)

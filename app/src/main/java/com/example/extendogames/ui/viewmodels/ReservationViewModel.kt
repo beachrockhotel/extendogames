@@ -15,8 +15,6 @@ import com.example.extendogames.api.services.ApiService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -107,10 +105,8 @@ class ReservationViewModel(application: Application) : AndroidViewModel(applicat
         apiService.checkAvailability(checkRequest).enqueue(object : Callback<AvailabilityResponse> {
             override fun onResponse(call: Call<AvailabilityResponse>, response: Response<AvailabilityResponse>) {
                 if (response.isSuccessful && response.body()?.available == true) {
-                    // Проверка баланса
                     val totalCost = duration * costPerHour
                     if (_userProfile.value?.balance ?: 0.0 >= totalCost) {
-                        // Списание средств
                         _userProfile.value?.balance = _userProfile.value?.balance?.minus(totalCost) ?: 0.0
                         updateUserBalanceInFirestore(totalCost)
                         reservePlace(placeNumber, date, time, duration)
@@ -199,7 +195,6 @@ class ReservationViewModel(application: Application) : AndroidViewModel(applicat
             }
             val formattedTime = timeFormat.format(startTime.time)
             onTimeSet(formattedTime)
-            // Обновление времени окончания после выбора времени начала
             updateEndTime(hoursSpinnerValue)
         }, startTime.get(Calendar.HOUR_OF_DAY), startTime.get(Calendar.MINUTE), true).show()
     }

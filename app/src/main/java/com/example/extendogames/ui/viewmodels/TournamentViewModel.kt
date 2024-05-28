@@ -7,13 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.extendogames.api.models.TournamentItem
 import com.example.extendogames.api.responses.TournamentResponse
 import com.example.extendogames.api.services.ApiService
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import com.example.extendogames.api.services.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class TournamentViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -23,20 +20,9 @@ class TournamentViewModel(application: Application) : AndroidViewModel(applicati
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
-    private val apiService: ApiService
+    private val apiService: ApiService = RetrofitClient.instance
 
     init {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:5000/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(OkHttpClient.Builder().addInterceptor(logging).build())
-            .build()
-
-        apiService = retrofit.create(ApiService::class.java)
         loadTournaments()
     }
 

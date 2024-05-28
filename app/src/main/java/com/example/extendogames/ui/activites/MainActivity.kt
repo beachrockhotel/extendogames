@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private fun setupButtons() {
-        for (i in 1..25) {
+        for (i in 1..35) {
             val buttonId = resources.getIdentifier("button_place_$i", "id", packageName)
             val button = findViewById<Button>(buttonId)
             button?.setOnClickListener {
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         runOnUiThread {
             val buttonId = resources.getIdentifier("button_place_$stationId", "id", packageName)
             val button = findViewById<Button>(buttonId)
-            button.setBackgroundResource(if (isAvailable) R.drawable.polygon_22 else R.drawable.arrowright)
+            button.setBackgroundResource(if (isAvailable) R.drawable.polygon_22 else R.drawable.busy)
         }
     }
 

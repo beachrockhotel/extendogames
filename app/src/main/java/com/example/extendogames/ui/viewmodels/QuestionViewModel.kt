@@ -48,7 +48,7 @@ class QuestionViewModel(application: Application) : AndroidViewModel(application
         apiService.postQuestion(question).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    _message.value = "Вопрос успешно добавлен"
+                    _message.value = "Сообщение отправлено"
                     loadQuestions()
                 } else {
                     _message.value = "Ошибка при добавлении вопроса: ${response.errorBody()?.string()}"
@@ -66,7 +66,7 @@ class QuestionViewModel(application: Application) : AndroidViewModel(application
         apiService.postAnswer(questionId, Answer(text = answerText, userEmail = userEmail)).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    _message.value = "Ответ успешно добавлен"
+                    _message.value = "Ответ успешно отправлен"
                     loadQuestions()
                 } else {
                     _message.value = "Ошибка при добавлении ответа: ${response.errorBody()?.string()}"

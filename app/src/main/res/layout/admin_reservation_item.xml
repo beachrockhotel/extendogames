@@ -14,39 +14,47 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tableNumberTextView"
+            android:id="@+id/reservation_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Стол"
+            android:text="ID"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/userNameTextView"
+            android:id="@+id/reservation_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Имя"
+            android:text="Место"
             android:textColor="@android:color/black" />
 
         <TextView
-            android:id="@+id/userEmailTextView"
+            android:id="@+id/reservation_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Время"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/reservation_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Длительность"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/reservation_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Почта"
             android:textColor="@android:color/black" />
 
         <TextView
-            android:id="@+id/totalPriceTextView"
+            android:id="@+id/reservation_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Сумма"
+            android:text="Имя"
             android:textColor="@android:color/black" />
 
-        <TextView
-            android:id="@+id/itemsDetailTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Товары"
-            android:textColor="@android:color/black" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

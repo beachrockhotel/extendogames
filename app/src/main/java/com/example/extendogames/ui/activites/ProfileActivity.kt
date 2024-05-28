@@ -6,15 +6,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Button
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.extendogames.R
 import com.example.extendogames.ui.viewmodels.ProfileViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.MenuItem
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var profileImage: ImageView
     private lateinit var userName: TextView
@@ -22,6 +23,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var userBalance: TextView
     private lateinit var editProfileButton: Button
     private lateinit var accountButton1: Button
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     private val viewModel: ProfileViewModel by viewModels()
 
@@ -65,6 +67,10 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavigationView.setOnNavigationItemSelectedListener(this)
+        bottomNavigationView.selectedItemId = R.id.navigation_profile
     }
 
     override fun onResume() {
@@ -128,12 +134,40 @@ class ProfileActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PROFILE_EDIT_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Обновляем данные профиля после возвращения из ProfileEditActivity
             viewModel.loadProfileFromFirestore()
         }
     }
 
     companion object {
         const val PROFILE_EDIT_REQUEST_CODE = 1
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.navigation_home -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_news -> {
+                val intent = Intent(this, NewsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_menu -> {
+                val intent = Intent(this, MenuActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_tournaments -> {
+                val intent = Intent(this, TournamentActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.navigation_profile -> {
+                return true
+            }
+        }
+        return false
     }
 }
