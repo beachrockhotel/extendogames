@@ -22,8 +22,10 @@ import com.example.extendogames.api.responses.PhoneNumberResponse
 import com.example.extendogames.api.responses.RegistrationResponse
 import com.example.extendogames.api.responses.ReservationStatisticsResponse
 import com.example.extendogames.api.responses.TournamentResponse
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -107,4 +109,10 @@ interface ApiService {
 
     @POST("/questions/{id}/answers")
     fun postAnswer(@Path("id") id: Int, @Body answer: Answer): Call<Void>
+
+    @DELETE("clear_order_history")
+    fun clearOrderHistory(): Call<ResponseBody>
+
+    @DELETE("clear_reservation_history")
+    fun clearReservationHistory(): Call<ResponseBody>
 }

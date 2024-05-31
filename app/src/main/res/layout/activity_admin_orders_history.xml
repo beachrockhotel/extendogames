@@ -34,11 +34,24 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderHistoryRecyclerView"
-        android:layout_width="417dp"
-        android:layout_height="788dp"
+        android:layout_width="412dp"
+        android:layout_height="739dp"
+        android:layout_marginBottom="56dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/clear_history_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="116dp"
+        android:text="Очистить историю"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.99" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

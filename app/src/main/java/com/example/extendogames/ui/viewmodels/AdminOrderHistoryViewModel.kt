@@ -1,16 +1,21 @@
 package com.example.extendogames.ui.viewmodels
 
+import android.app.Application
+import android.widget.Toast
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.extendogames.api.models.Order
 import com.example.extendogames.api.responses.OrdersResponse
 import com.example.extendogames.api.services.RetrofitClient
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AdminOrderHistoryViewModel : ViewModel() {
+class AdminOrderHistoryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _orders = MutableLiveData<List<Order>>()
     val orders: LiveData<List<Order>> get() = _orders
@@ -36,5 +41,24 @@ class AdminOrderHistoryViewModel : ViewModel() {
                 _error.value = "Ошибка загрузки заказов: ${t.message}"
             }
         })
+    }
+
+    fun clearOrderHistory() {
+        viewModelScope.launch {
+            RetrofitClient.instance.clearOrderHistory().enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        loadOrders()
+                        Toast.makeText(getApplication(), "История успешно очищена", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(getApplication(), "Не удалось очистить историю", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(getApplication(), "Ошибка: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
 }

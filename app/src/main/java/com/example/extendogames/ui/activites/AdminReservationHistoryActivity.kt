@@ -1,8 +1,10 @@
 package com.example.extendogames.ui.activites
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +28,11 @@ class AdminReservationHistoryActivity : AppCompatActivity() {
         adapter = AdminReservationHistoryAdapter(emptyList())
         recyclerView.adapter = adapter
 
+        val clearHistoryButton = findViewById<Button>(R.id.clear_history_button)
+        clearHistoryButton.setOnClickListener {
+            clearHistory()
+        }
+
         observeViewModel()
     }
 
@@ -37,5 +44,16 @@ class AdminReservationHistoryActivity : AppCompatActivity() {
         viewModel.error.observe(this, Observer { errorMessage ->
             Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
         })
+    }
+
+    private fun clearHistory() {
+        AlertDialog.Builder(this)
+            .setTitle("Очистить историю")
+            .setMessage("Вы уверены, что хотите очистить историю?")
+            .setPositiveButton("Да") { _, _ ->
+                viewModel.clearReservationHistory()
+            }
+            .setNegativeButton("Нет", null)
+            .show()
     }
 }

@@ -28,7 +28,6 @@ class SupportPhoneActivity : AppCompatActivity() {
         submitButton = findViewById(R.id.submit_button)
         user = FirebaseAuth.getInstance().currentUser!!
 
-        // Добавляем "+7" в поле ввода
         phoneNumberInput.setText("+7 ")
         phoneNumberInput.setSelection(phoneNumberInput.text.length)
 
