@@ -8,14 +8,12 @@ import com.example.extendogames.api.models.Question
 import com.example.extendogames.api.models.ReservationRequest
 import com.example.extendogames.api.models.ReservationResponse
 import com.example.extendogames.api.models.Review
-import com.example.extendogames.api.requests.NotificationRequest
 import com.example.extendogames.api.requests.PhoneNumberRequest
 import com.example.extendogames.api.requests.SupportRequest
 import com.example.extendogames.api.requests.TeamRegistrationRequest
 import com.example.extendogames.api.responses.AvailabilityResponse
 import com.example.extendogames.api.responses.FoodOrderStatisticsResponse
 import com.example.extendogames.api.responses.NewsResponse
-import com.example.extendogames.api.responses.NotificationResponse
 import com.example.extendogames.api.responses.OrderResponse
 import com.example.extendogames.api.responses.OrdersResponse
 import com.example.extendogames.api.responses.PhoneNumberResponse
@@ -98,8 +96,11 @@ interface ApiService {
     @GET("support_phone_numbers")
     fun getSupportPhoneNumbers(): Call<List<PhoneNumberResponse>>
 
-    @POST("send-notification")
-    fun sendNotification(@Body data: NotificationRequest): Call<NotificationResponse>
+    @DELETE("clear_support_requests")
+    fun clearSupportRequests(): Call<ResponseBody>
+
+    @DELETE("clear_support_phones")
+    fun clearSupportPhones(): Call<ResponseBody>
 
     @GET("/questions")
     fun getQuestions(): Call<List<Question>>
@@ -115,4 +116,14 @@ interface ApiService {
 
     @DELETE("clear_reservation_history")
     fun clearReservationHistory(): Call<ResponseBody>
+
+    @DELETE("cancel_reservation/{id}")
+    fun cancelReservation(@Path("id") reservationId: Int): Call<ResponseBody>
+
+    @DELETE("cancel_order")
+    fun deleteOrder(
+        @Query("user_email") userEmail: String,
+        @Query("table_number") tableNumber: String
+    ): Call<ResponseBody>
+
 }

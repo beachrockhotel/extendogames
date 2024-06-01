@@ -34,12 +34,22 @@
 
     <ListView
         android:id="@+id/lvPhoneNumbers"
-        android:layout_width="410dp"
-        android:layout_height="761dp"
+        android:layout_width="414dp"
+        android:layout_height="703dp"
+        app:layout_constraintBottom_toTopOf="@id/clear_support_phone_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_message_auth"
+        tools:listitem="@android:layout/simple_list_item_1" />
+
+    <Button
+        android:id="@+id/clear_support_phone_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Очистить номера телефонов"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+        app:layout_constraintVertical_bias="0.994" />
 </androidx.constraintlayout.widget.ConstraintLayout>

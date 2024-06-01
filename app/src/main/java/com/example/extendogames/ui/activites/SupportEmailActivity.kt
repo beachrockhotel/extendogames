@@ -30,7 +30,6 @@ class SupportEmailActivity : AppCompatActivity() {
         sendButton = findViewById(R.id.send_button)
         user = FirebaseAuth.getInstance().currentUser!!
 
-        // Загрузка email из Firestore
         firestore.collection("Users").document(user.uid).get()
             .addOnSuccessListener { document ->
                 if (document != null) {

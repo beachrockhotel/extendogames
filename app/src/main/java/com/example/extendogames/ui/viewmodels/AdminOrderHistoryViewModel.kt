@@ -1,6 +1,7 @@
 package com.example.extendogames.ui.viewmodels
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -52,6 +53,32 @@ class AdminOrderHistoryViewModel(application: Application) : AndroidViewModel(ap
                         Toast.makeText(getApplication(), "История успешно очищена", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(getApplication(), "Не удалось очистить историю", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(getApplication(), "Ошибка: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
+
+    fun deleteOrder(userEmail: String, tableNumber: String) {
+        if (userEmail.isEmpty() || tableNumber.isEmpty()) {
+            _error.value = "Invalid order data: userEmail=$userEmail, tableNumber=$tableNumber"
+            return
+        }
+
+        Log.d("AdminOrderHistoryViewModel", "Deleting order: userEmail=$userEmail, tableNumber=$tableNumber")
+
+        viewModelScope.launch {
+            RetrofitClient.instance.deleteOrder(userEmail, tableNumber).enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        loadOrders()
+                        Toast.makeText(getApplication(), "Заказ успешно удалён", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(getApplication(), "Не удалось удалить заказ", Toast.LENGTH_SHORT).show()
                     }
                 }
 

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.extendogames.R
+import com.example.extendogames.api.models.ReservationResponse
 import com.example.extendogames.ui.adapters.AdminReservationHistoryAdapter
 import com.example.extendogames.ui.viewmodels.AdminReservationHistoryViewModel
 
@@ -25,7 +26,11 @@ class AdminReservationHistoryActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.reservationRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = AdminReservationHistoryAdapter(emptyList())
+        adapter = AdminReservationHistoryAdapter(emptyList(), { reservation ->
+            deleteReservation(reservation)
+        }, { reservationId, isChecked ->
+            viewModel.updateAttendance(reservationId, isChecked)
+        })
         recyclerView.adapter = adapter
 
         val clearHistoryButton = findViewById<Button>(R.id.clear_history_button)
@@ -56,4 +61,16 @@ class AdminReservationHistoryActivity : AppCompatActivity() {
             .setNegativeButton("Нет", null)
             .show()
     }
+
+    private fun deleteReservation(reservation: ReservationResponse) {
+        AlertDialog.Builder(this)
+            .setTitle("Удалить бронирование")
+            .setMessage("Вы уверены, что хотите удалить это бронирование?")
+            .setPositiveButton("Да") { _, _ ->
+                viewModel.deleteReservation(reservation.reservation_id)
+            }
+            .setNegativeButton("Нет", null)
+            .show()
+    }
 }
+

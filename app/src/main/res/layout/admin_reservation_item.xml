@@ -7,10 +7,9 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
         <TextView
@@ -19,42 +18,81 @@
             android:layout_height="wrap_content"
             android:text="ID"
             android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/trash_imageview"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/trash" />
+
+            <Button
+                android:id="@+id/delete_reservation_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@android:color/transparent" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/reservation_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Место"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservation_id"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/reservation_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Время"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservation_place" />
 
         <TextView
             android:id="@+id/reservation_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Длительность"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservation_time" />
 
         <TextView
             android:id="@+id/reservation_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Почта"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservation_duration" />
 
         <TextView
             android:id="@+id/reservation_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Имя"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservation_email" />
 
-    </LinearLayout>
+        <CheckBox
+            android:id="@+id/attendance_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Присутствие"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservation_name" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

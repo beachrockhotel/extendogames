@@ -61,4 +61,23 @@ class AdminReservationHistoryViewModel(application: Application) : AndroidViewMo
             })
         }
     }
+
+    fun deleteReservation(reservationId: Int) {
+        viewModelScope.launch {
+            RetrofitClient.instance.cancelReservation(reservationId).enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        loadReservations()
+                        Toast.makeText(getApplication(), "Бронирование успешно удалено", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(getApplication(), "Не удалось удалить бронирование", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(getApplication(), "Ошибка: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
 }

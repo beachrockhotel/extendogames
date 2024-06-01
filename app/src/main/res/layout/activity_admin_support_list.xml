@@ -34,10 +34,22 @@
 
     <ListView
         android:id="@+id/listView_support_requests"
-        android:layout_width="407dp"
-        android:layout_height="745dp"
+        android:layout_width="412dp"
+        android:layout_height="719dp"
+        app:layout_constraintBottom_toTopOf="@id/clear_support_email_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_message_auth"
+        tools:listitem="@android:layout/simple_list_item_1" />
+
+    <Button
+        android:id="@+id/clear_support_email_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Очистить вопросы"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@android:layout/simple_list_item_1" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.994" />
 </androidx.constraintlayout.widget.ConstraintLayout>

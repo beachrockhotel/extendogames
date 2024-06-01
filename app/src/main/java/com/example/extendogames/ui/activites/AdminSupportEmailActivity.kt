@@ -1,7 +1,10 @@
 package com.example.extendogames.ui.activites
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -13,6 +16,7 @@ import com.example.extendogames.ui.viewmodels.AdminSupportEmailViewModel
 class AdminSupportEmailActivity : AppCompatActivity() {
 
     private lateinit var listView: ListView
+    private lateinit var clearEmailButton: Button
     private val viewModel: AdminSupportEmailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,8 +24,11 @@ class AdminSupportEmailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_admin_support_list)
 
         listView = findViewById(R.id.listView_support_requests)
+        clearEmailButton = findViewById(R.id.clear_support_email_button)
 
         observeViewModel()
+        setupListViewClickListener()
+        setupClearButtonListener()
     }
 
     private fun observeViewModel() {
@@ -33,6 +40,41 @@ class AdminSupportEmailActivity : AppCompatActivity() {
         viewModel.error.observe(this, Observer { errorMessage ->
             Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
         })
+
+        viewModel.clearContactInfoSuccess.observe(this, Observer { successMessage ->
+            if (successMessage.isNotEmpty()) {
+                Toast.makeText(this, successMessage, Toast.LENGTH_LONG).show()
+                viewModel.loadSupportRequests()  // Reload the list after clearing
+            }
+        })
+    }
+
+    private fun setupListViewClickListener() {
+        listView.setOnItemClickListener { parent, view, position, id ->
+            val email = viewModel.supportRequests.value?.get(position)?.email
+            if (email != null) {
+                sendEmail(email)
+            } else {
+                Toast.makeText(this, "Ошибка: email не найден", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun sendEmail(email: String) {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:$email")
+            putExtra(Intent.EXTRA_SUBJECT, "Support Request")
+        }
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Нет приложения для отправки email", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupClearButtonListener() {
+        clearEmailButton.setOnClickListener {
+            viewModel.clearContactInfo()
+        }
     }
 }
-
