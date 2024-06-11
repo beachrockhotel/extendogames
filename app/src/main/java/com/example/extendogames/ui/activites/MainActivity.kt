@@ -38,7 +38,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onResume() {
         super.onResume()
         updateButtonsState()
+
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.selectedItemId = R.id.navigation_home
     }
+
 
     private fun setupApi() {
         val retrofit = Retrofit.Builder()
@@ -103,31 +107,37 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val userPrivileges = intent.getBooleanExtra("userPrivileges", false)
         when (item.itemId) {
             R.id.navigation_home -> {
                 return true
             }
             R.id.navigation_news -> {
                 val intent = Intent(this, NewsActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
             R.id.navigation_menu -> {
                 val intent = Intent(this, MenuActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
             R.id.navigation_tournaments -> {
                 val intent = Intent(this, TournamentActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
             R.id.navigation_profile -> {
                 val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
         }
         return false
     }
+
 }

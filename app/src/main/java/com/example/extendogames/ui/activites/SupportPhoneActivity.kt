@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,11 @@ class SupportPhoneActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_support_phone)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         phoneNumberInput = findViewById(R.id.phone_input)
         submitButton = findViewById(R.id.submit_button)

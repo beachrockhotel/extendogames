@@ -2,9 +2,12 @@ package com.example.extendogames.ui.activites
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.*
 import com.example.extendogames.R
 import com.example.extendogames.ui.factory.RegistrationViewModelFactory
 import com.example.extendogames.ui.viewmodels.RegistrationViewModel
@@ -22,6 +25,11 @@ class RegistrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         val nameField = findViewById<EditText>(R.id.name_registration)
         val emailField = findViewById<EditText>(R.id.email_reg)

@@ -2,6 +2,7 @@ package com.example.extendogames.ui.activites
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -37,6 +38,11 @@ class AdminOrderHistoryActivity : AppCompatActivity() {
         }
 
         observeViewModel()
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun observeViewModel() {

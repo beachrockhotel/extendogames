@@ -2,6 +2,7 @@ package com.example.extendogames.ui.activites
 
 import android.graphics.Color
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -28,6 +29,11 @@ class AdminReservationStatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_reservation_statistics)
 
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
+
         val revenueChart = findViewById<LineChart>(R.id.revenueChart)
         val countChart = findViewById<LineChart>(R.id.countChart)
 
@@ -44,15 +50,23 @@ class AdminReservationStatisticsActivity : AppCompatActivity() {
                 var index = 0
                 var totalRevenue = 0f
                 var totalCount = 0
-                val dateFormat = SimpleDateFormat("dd-MM", Locale.getDefault())
+                val dateFormat = SimpleDateFormat("dd.MM", Locale.getDefault())
+                val serverDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
                 statistics.forEach { (date, stat) ->
                     totalRevenue += stat.revenue.toFloat()
                     totalCount += stat.count
                     entriesRevenue.add(Entry(index.toFloat(), stat.revenue.toFloat()))
                     entriesCount.add(Entry(index.toFloat(), stat.count.toFloat()))
-                    val formattedDate = dateFormat.format(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date)!!)
-                    dates.add(formattedDate)
+
+                    try {
+                        val parsedDate = serverDateFormat.parse(date)
+                        val formattedDate = dateFormat.format(parsedDate!!)
+                        dates.add(formattedDate)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        dates.add(date) // На случай, если парсинг даты не удался, добавляем оригинальную дату
+                    }
                     index++
                 }
 
@@ -88,6 +102,7 @@ class AdminReservationStatisticsActivity : AppCompatActivity() {
 
                 revenueChart.xAxis.apply {
                     textSize = 14f
+                    granularity = 1f
                     valueFormatter = object : ValueFormatter() {
                         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
                             return dates.getOrNull(value.toInt()) ?: value.toString()
@@ -103,6 +118,7 @@ class AdminReservationStatisticsActivity : AppCompatActivity() {
 
                 countChart.xAxis.apply {
                     textSize = 14f
+                    granularity = 1f
                     valueFormatter = object : ValueFormatter() {
                         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
                             return dates.getOrNull(value.toInt()) ?: value.toString()

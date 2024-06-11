@@ -3,6 +3,7 @@ package com.example.extendogames.ui.activites
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.example.extendogames.R
 
@@ -11,6 +12,11 @@ class AdminPanelActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_panel)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         val historyAdminButton = findViewById<Button>(R.id.users_reservation_button)
         historyAdminButton.setOnClickListener {

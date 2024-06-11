@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".">
+    tools:context=".ui.activites.TournamentRegistrationActivity">
 
     <ImageView
         android:id="@+id/back_arrow"
@@ -17,6 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.029"
         app:srcCompat="@drawable/backarrow" />
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="@id/back_arrow"
+        app:layout_constraintTop_toTopOf="@id/back_arrow"
+        app:layout_constraintEnd_toEndOf="@id/back_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/back_arrow" />
 
     <TextView
         android:id="@+id/welcome_message_tournament_registration"
@@ -222,18 +232,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.881" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconSize="24dp"
-        app:itemTextAppearanceActive="@style/BottomNavigationText"
-        app:itemTextAppearanceInactive="@style/BottomNavigationText" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

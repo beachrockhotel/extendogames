@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -24,6 +25,11 @@ class ReviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_review)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         reviewRatingSpinner = findViewById(R.id.review_rating_spinner)
         ArrayAdapter.createFromResource(

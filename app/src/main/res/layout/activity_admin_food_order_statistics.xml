@@ -19,6 +19,16 @@
         app:layout_constraintVertical_bias="0.018"
         app:srcCompat="@drawable/backarrow" />
 
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="@id/back_arrow"
+        app:layout_constraintTop_toTopOf="@id/back_arrow"
+        app:layout_constraintEnd_toEndOf="@id/back_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/back_arrow" />
+
     <TextView
         android:id="@+id/revenueTitle"
         android:layout_width="0dp"

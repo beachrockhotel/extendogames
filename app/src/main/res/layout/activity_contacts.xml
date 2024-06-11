@@ -17,6 +17,16 @@
         app:layout_constraintVertical_bias="0.047"
         app:srcCompat="@drawable/backarrow" />
 
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="@id/back_arrow"
+        app:layout_constraintTop_toTopOf="@id/back_arrow"
+        app:layout_constraintEnd_toEndOf="@id/back_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/back_arrow" />
+
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
@@ -37,8 +47,7 @@
         android:layout_width="396dp"
         android:layout_height="124dp"
         android:fontFamily="@font/roboto"
-        android:text="Добро пожаловать в наш компьютерный клуб – идеальное место для геймеров, киберспортсменов и всех любителей технологий! Мы предлагаем современное оборудование, высокоскоростной интернет и уютную атмосферу для максимального комфорта и продуктивности.
-        Телефон для связи: 8(800)555-35-35"
+        android:text="Добро пожаловать в наш компьютерный клуб – идеальное место для геймеров, киберспортсменов и всех любителей игр! Мы предлагаем современное оборудование, высокоскоростной интернет и уютную атмосферу для максимального комфорта."
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -53,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto"
-        android:text="Мы работаем с 8:00 до 23:00."
+        android:text="Мы работаем с 7:00 до 23:00."
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -61,6 +70,21 @@
         app:layout_constraintHorizontal_bias="0.044"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.264" />
+        app:layout_constraintVertical_bias="0.28" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto"
+        android:text="Телефон для связи: 8(800)555-35-35"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.058"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.246" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -25,6 +26,11 @@ class AdminSupportEmailActivity : AppCompatActivity() {
 
         listView = findViewById(R.id.listView_support_requests)
         clearEmailButton = findViewById(R.id.clear_support_email_button)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         observeViewModel()
         setupListViewClickListener()

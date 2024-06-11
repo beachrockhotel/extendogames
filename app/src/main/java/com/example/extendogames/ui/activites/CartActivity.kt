@@ -1,7 +1,12 @@
 package com.example.extendogames.ui.activites
 
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,12 +19,10 @@ import com.example.extendogames.ui.adapters.CartAdapter
 import com.example.extendogames.ui.factory.CartViewModelFactory
 import com.example.extendogames.ui.viewmodels.CartViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
 
 class CartActivity : AppCompatActivity() {
     private val viewModel: CartViewModel by viewModels { CartViewModelFactory(RetrofitClient.instance) }
@@ -31,6 +34,11 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         setupUI()
         loadUserData()

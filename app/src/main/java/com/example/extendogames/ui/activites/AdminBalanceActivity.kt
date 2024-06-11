@@ -3,6 +3,7 @@ package com.example.extendogames.ui.activites
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,11 @@ class AdminBalanceActivity : AppCompatActivity() {
         emailField = findViewById(R.id.email_field)
         balanceField = findViewById(R.id.balance_field)
         updateButton = findViewById(R.id.update_balance_button)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         updateButton.setOnClickListener {
             val email = emailField.text.toString().trim()

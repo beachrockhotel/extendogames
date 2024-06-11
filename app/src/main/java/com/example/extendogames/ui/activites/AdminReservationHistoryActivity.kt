@@ -2,6 +2,7 @@ package com.example.extendogames.ui.activites
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -24,12 +25,18 @@ class AdminReservationHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_reservation_history)
 
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
+
         recyclerView = findViewById(R.id.reservationRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = AdminReservationHistoryAdapter(emptyList(), { reservation ->
             deleteReservation(reservation)
         }, { reservationId, isChecked ->
-            viewModel.updateAttendance(reservationId, isChecked)
+            // Удалите этот вызов, если он больше не нужен
+            // viewModel.updateAttendance(reservationId, isChecked)
         })
         recyclerView.adapter = adapter
 
@@ -73,4 +80,3 @@ class AdminReservationHistoryActivity : AppCompatActivity() {
             .show()
     }
 }
-

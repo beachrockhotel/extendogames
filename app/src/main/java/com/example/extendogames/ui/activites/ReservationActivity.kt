@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
@@ -26,6 +27,9 @@ class ReservationActivity : AppCompatActivity() {
     private lateinit var hoursSpinner: Spinner
     private lateinit var gameStationStatusView: TextView
     private lateinit var deviceSpecsView: TextView
+    private lateinit var costPerHourView: TextView
+
+    private val premiumPlaces = setOf(8, 9, 10, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +37,11 @@ class ReservationActivity : AppCompatActivity() {
 
         setupViews()
         setupObservers()
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         viewModel.userProfile.observe(this, Observer { user ->
             user?.let {
@@ -48,13 +57,15 @@ class ReservationActivity : AppCompatActivity() {
         val initialHours = hoursSpinner.selectedItem.toString().toInt()
         endTimeView.text = viewModel.updateEndTime(initialHours)
 
-        val placeNumber = intent.getStringExtra("PLACE_NUMBER") ?: "1"
+        val placeNumber = intent.getStringExtra("PLACE_NUMBER")?.toInt() ?: 1
         val date = findViewById<TextView>(R.id.textView_date).text.toString()
         val time = findViewById<TextView>(R.id.textView_time).text.toString()
         val duration = hoursSpinner.selectedItem.toString().toInt()
-        val costPerHour = 100.0
 
-        viewModel.checkStationAvailability(placeNumber, date, time, duration) { isAvailable ->
+        val costPerHour = if (premiumPlaces.contains(placeNumber)) 200.0 else 100.0
+        costPerHourView.text = "1 час - $costPerHour рублей"
+
+        viewModel.checkStationAvailability(placeNumber.toString(), date, time, duration) { isAvailable ->
             runOnUiThread {
                 gameStationStatusView.text = if (isAvailable) "Свободна" else "Занята"
             }
@@ -70,6 +81,7 @@ class ReservationActivity : AppCompatActivity() {
         hoursSpinner = findViewById(R.id.hours_spinner)
         gameStationStatusView = findViewById(R.id.game_station_status)
         deviceSpecsView = findViewById(R.id.textView6)
+        costPerHourView = findViewById(R.id.cost_per_hour_view)
 
         val dateView = findViewById<TextView>(R.id.textView_date)
         dateView.text = viewModel.dateFormat.format(Calendar.getInstance().time)
@@ -125,12 +137,14 @@ class ReservationActivity : AppCompatActivity() {
         }
 
         registerButton.setOnClickListener {
-            val placeNumber = intent.getStringExtra("PLACE_NUMBER") ?: "1"
+            val placeNumber = intent.getStringExtra("PLACE_NUMBER")?.toInt() ?: 1
             val date = dateView.text.toString()
             val time = timeView.text.toString()
             val duration = hoursSpinner.selectedItem.toString().toInt()
-            val costPerHour = 100.0 // Установите значение стоимости за час
-            viewModel.checkAvailabilityAndReserve(placeNumber, date, time, duration, costPerHour)
+            val costPerHour = if (premiumPlaces.contains(placeNumber)) 200.0 else 100.0
+            costPerHourView.text = "1 час - $costPerHour рублей"
+
+            viewModel.checkAvailabilityAndReserve(placeNumber.toString(), date, time, duration, costPerHour)
             Log.d("ReservationActivity", "Register clicked: placeNumber=$placeNumber, date=$date, time=$time, duration=$duration")
         }
     }

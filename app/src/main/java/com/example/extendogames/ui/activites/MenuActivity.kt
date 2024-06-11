@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -38,6 +39,11 @@ class MenuActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         viewCartButton = findViewById(R.id.view_cart_button)
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
+
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         adapter = MenuAdapter(emptyList()) { menuItem, quantity ->
             viewModel.addToCart(menuItem, quantity)
@@ -68,15 +74,24 @@ class MenuActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigationView.selectedItemId = R.id.navigation_menu
     }
 
+    override fun onResume() {
+        super.onResume()
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.selectedItemId = R.id.navigation_menu
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val userPrivileges = intent.getBooleanExtra("userPrivileges", false)
         when (item.itemId) {
             R.id.navigation_home -> {
                 val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
             R.id.navigation_news -> {
                 val intent = Intent(this, NewsActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
@@ -85,11 +100,13 @@ class MenuActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.navigation_tournaments -> {
                 val intent = Intent(this, TournamentActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
             R.id.navigation_profile -> {
                 val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }

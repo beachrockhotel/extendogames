@@ -3,6 +3,7 @@ package com.example.extendogames.ui.activites
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -36,6 +37,11 @@ class AdminFoodOrderStatisticsActivity : AppCompatActivity() {
         val countTitle = findViewById<TextView>(R.id.countTitle)
         val totalRevenueText = findViewById<TextView>(R.id.totalRevenueText)
         val totalOrdersText = findViewById<TextView>(R.id.totalOrdersText)
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         viewModel.statistics.observe(this, Observer { statistics ->
             if (statistics != null) {

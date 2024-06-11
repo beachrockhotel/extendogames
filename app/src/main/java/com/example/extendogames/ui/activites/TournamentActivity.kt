@@ -3,13 +3,13 @@ package com.example.extendogames.ui.activites
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.extendogames.R
-import com.example.extendogames.api.models.TournamentItem
 import com.example.extendogames.ui.adapters.TournamentAdapter
 import com.example.extendogames.ui.viewmodels.TournamentViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,6 +25,11 @@ class TournamentActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tournament)
 
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
+
         recyclerView = findViewById(R.id.tournamentRecyclerView)
         adapter = TournamentAdapter(this, arrayListOf(), this)
         recyclerView.adapter = adapter
@@ -34,6 +39,12 @@ class TournamentActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
         bottomNavigationView.selectedItemId = R.id.navigation_tournaments
 
         setupObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.selectedItemId = R.id.navigation_tournaments
     }
 
     private fun setupObservers() {
@@ -60,19 +71,23 @@ class TournamentActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val userPrivileges = intent.getBooleanExtra("userPrivileges", false)
         when (item.itemId) {
             R.id.navigation_home -> {
                 val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
             R.id.navigation_news -> {
                 val intent = Intent(this, NewsActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
             R.id.navigation_menu -> {
                 val intent = Intent(this, MenuActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }
@@ -81,6 +96,7 @@ class TournamentActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
             }
             R.id.navigation_profile -> {
                 val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("userPrivileges", userPrivileges)
                 startActivity(intent)
                 return true
             }

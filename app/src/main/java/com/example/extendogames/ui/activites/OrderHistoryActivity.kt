@@ -1,6 +1,7 @@
 package com.example.extendogames.ui.activites
 
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +33,11 @@ class OrderHistoryActivity : AppCompatActivity() {
         viewModel.errorMessage.observe(this, Observer { message ->
             Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
         })
+
+        val backButton = findViewById<ImageButton>(R.id.back_button)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         viewModel.loadOrders()
     }
